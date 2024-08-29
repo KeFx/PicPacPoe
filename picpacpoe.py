@@ -11,20 +11,45 @@ class gamebaord:
         self.current_player = "x"
     
     def __str__(self) -> str:
-        return str(self.gb)
+        return '\n'.join(['|'.join(row) for row in self.gb])
     
-    def display_current_player(self):
-        current_player =tk.Label(master=frame, text=self.current_player)
-        current_player.pack()
+    def process_move(self, event):
+        self.set_current_player()
+        self.update_cell(event)
+        self.check_for_win()
 
-    def update_button(self, event):
+    def set_current_player(self):
         self.current_player = "x" if self.current_player == "O" else "O"
-        button = event.widget
-        grid_info = button.grid_info()
-        grid_row = grid_info['row']
-        grid_column = grid_info['column']
-        tk.Button(frame, text=self.current_player).grid(row = grid_row, column = grid_column)
-        
+
+    def update_cell(self, event):
+        tkButton = event.widget
+        grid_info = tkButton.grid_info()
+        row = grid_info['row']
+        column = grid_info['column']
+
+        self.update_gb_cell(row, column)
+        self.update_tk_button(row, column)
+
+    def update_gb_cell(self, row, column):
+        self.gb[row][column] = self.current_player
+
+    def update_tk_button(self, row, column):
+        tk.Button(frame, text=self.current_player).grid(row = row, column = column)
+
+    def check_for_win(self):
+        if self.row_win() or self.column_win() or self.diagonal_win():
+            win_message = tk.Label(text="'x' wins", width=20, borderwidth=1, relief="solid")
+            win_message.place(relx=1.0, rely=1.0, x=1, y=-1, anchor="se")
+    
+    def row_win(self):
+        return True
+    
+    def column_win(self):
+        pass 
+
+    def diagonal_win(self):
+        pass
+
 window = tk.Tk()
 
 frame = tk.Frame(master=window, padx=20, pady=20)
@@ -34,14 +59,15 @@ gb1 = gamebaord()
 
 for row_num in range(0,3):
     for col_num in range(0,3):
-        gb1.gb[row_num][col_num] = tk.Button(master=frame, text="")
-        gb1.gb[row_num][col_num].bind("<ButtonPress-1>", gb1.update_button)
-        gb1.gb[row_num][col_num].grid(column=col_num, row=row_num)
+        button = tk.Button(master=frame, text=" ")
+        button.bind("<ButtonPress-1>", gb1.process_move)
+        button.grid(column=col_num, row=row_num)
 
+        gb1.gb[row_num][col_num] = button['text']
 
 # button = tk.Button(master=frame)
 # button.bind("<ButtonPress-1>", update_button)
 # button.pack()
 
 window.mainloop()
-
+print(gb1)
