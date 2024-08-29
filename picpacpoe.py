@@ -38,17 +38,24 @@ class gamebaord:
 
     def check_for_win(self):
         if self.row_win() or self.column_win() or self.diagonal_win():
-            win_message = tk.Label(text="'x' wins", width=20, borderwidth=1, relief="solid")
-            win_message.place(relx=1.0, rely=1.0, x=1, y=-1, anchor="se")
+            win_message = tk.Label(text=f"{self.current_player} wins", width=20, borderwidth=1, relief="solid", background="blue")
+            win_message.place(relx=1.0, rely=1.0, x=1, y=-40, anchor="se")
     
     def row_win(self):
-        return True
+        for row in self.gb:
+            if row[0] != " " and (row[0] == row[1] == row[2]):
+               return True
     
     def column_win(self):
-        pass 
+        for column in range(0,3):
+            if self.gb[0][column] != " " and (self.gb[0][column] == self.gb[1][column] == self.gb[2][column]):
+                return True
 
     def diagonal_win(self):
-        pass
+        postive_diagonal_win = self.gb[0][2] != " " and (self.gb[0][2] == self.gb[1][1] == self.gb[2][0])
+        negative_diagonal_win = self.gb[0][0] != " " and (self.gb[0][0] == self.gb[1][1] == self.gb[2][2])
+
+        return postive_diagonal_win or negative_diagonal_win
 
 window = tk.Tk()
 
@@ -63,7 +70,7 @@ for row_num in range(0,3):
         button.bind("<ButtonPress-1>", gb1.process_move)
         button.grid(column=col_num, row=row_num)
 
-        gb1.gb[row_num][col_num] = button['text']
+        gb1.gb[row_num][col_num] = " "
 
 # button = tk.Button(master=frame)
 # button.bind("<ButtonPress-1>", update_button)
